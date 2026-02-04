@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="MessageLoop.Common/MessageLoop.Common.csproj" />
+  <Project Path="MessageLoop.Master/MessageLoop.Master.csproj" Id="a4dde73c-9723-4d51-b5ac-8ad8639d8df5" />
 </Solution>
