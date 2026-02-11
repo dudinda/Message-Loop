@@ -1,5 +1,8 @@
 <Solution>
   <Folder Name="/Solution Items/">
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path="LICENSE.txt" />
     <File Path="README.md" />
     <File Path="StartAll.ps1" />
     <File Path="StopAll.ps1" />
