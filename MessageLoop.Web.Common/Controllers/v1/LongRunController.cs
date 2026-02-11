@@ -5,9 +5,11 @@ using Asp.Versioning;
 using MessageLoop.Common.Models.LongRun;
 using MessageLoop.Common.Services.LongRun;
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
-namespace MessageLoop.Master.Controllers.v1
+namespace MessageLoop.Web.Common.Controllers.v1
 {
     [ApiController, ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/longrun")]
@@ -30,11 +32,11 @@ namespace MessageLoop.Master.Controllers.v1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetLongRunStatus(Guid tokenId)
 		{
-            if (_storage.TryGetResult(tokenId, out var token))
+            if (!_storage.TryGetResult(tokenId, out var token))
             {
-                return Ok(token);
+                return NotFound();
             }
-            return NotFound();
+            return Ok(token);
 		}
 
         [HttpGet]

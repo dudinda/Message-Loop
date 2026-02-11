@@ -2,11 +2,16 @@
 using MessageLoop.Common.Services.LongRun;
 using MessageLoop.Common.Services.LongRun.Implementation;
 
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
 using Serilog;
 
-namespace MessageLoop.Master
+namespace MessageLoop.Web.Common
 {
-    public class Startup(IConfiguration Configuration)
+    public class CommonStartup(IConfiguration Configuration)
     {
         public void ConfigureServices(IServiceCollection services)
         {
