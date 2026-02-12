@@ -25,9 +25,9 @@ namespace MessageLoop.Web.Common.Controllers.v1
 
         [HttpPost("onSelf")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [LongRun(Description = "Long run operation on the self")]
-        public IActionResult GetLongRunStatus(Guid tokenId)
+        public IActionResult StartLongRunOnSelf()
         {
             var token = _service.PutTask(async (cncl) =>
             {
