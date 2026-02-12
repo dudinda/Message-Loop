@@ -6,9 +6,10 @@ using MessageLoop.Common.Models.LongRun;
 using MessageLoop.Common.Services.LongRun;
 using MessageLoop.Web.Common.Code.Filters;
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MessageLoop.Slave.Controllers.v1
+namespace MessageLoop.Web.Common.Controllers.v1
 {
     [ApiController, ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/demo")]
@@ -22,10 +23,10 @@ namespace MessageLoop.Slave.Controllers.v1
             _service = service;
         }
 
-        [HttpPost("startSlaveTask")]
+        [HttpPost("onSelf")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [LongRun(Description = "Long run operation on the slave process")]
+        [LongRun(Description = "Long run operation on the self")]
         public IActionResult GetLongRunStatus(Guid tokenId)
         {
             var token = _service.PutTask(async (cncl) =>
@@ -33,10 +34,12 @@ namespace MessageLoop.Slave.Controllers.v1
                 using (var child = CancellationTokenSource.CreateLinkedTokenSource(cncl))
                 {
                     child.CancelAfter(TimeSpan.FromSeconds(300));
-                    while (!child.IsCancellationRequested)
+                    var token = child.Token;
+                    while (!token.IsCancellationRequested)
                     {
-                        await Task.Delay(TimeSpan.FromSeconds(5));
+                        await Task.Delay(TimeSpan.FromSeconds(5), token);
                     }
+                    token.ThrowIfCancellationRequested();
                 }
                 return 0;
             });
@@ -45,3 +48,5 @@ namespace MessageLoop.Slave.Controllers.v1
         }
     }
 }
+
+
