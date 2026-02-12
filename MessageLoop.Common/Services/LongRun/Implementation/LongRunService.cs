@@ -1,5 +1,7 @@
 ﻿using MessageLoop.Common.Models.LongRun;
 
+using Microsoft.Extensions.Logging;
+
 namespace MessageLoop.Common.Services.LongRun.Implementation
 {
     public class LongRunService<T> : ILongRunService<T> where T : LongRunItem, new()
@@ -7,10 +9,14 @@ namespace MessageLoop.Common.Services.LongRun.Implementation
         private readonly Dictionary<Guid, T> _running = new();
         private readonly Dictionary<Guid, T> _end = new();
         private readonly LongRunContext _context;
+        private readonly ILogger<LongRunService<T>> _logger;
 
-        public LongRunService(LongRunContext context)
+        public LongRunService(
+            ILogger<LongRunService<T>> logger,
+            LongRunContext context)
         {
             _context = context;
+            _logger = logger;
         }
 
         public List<T> Items => _running.Values.ToList();
@@ -71,6 +77,16 @@ namespace MessageLoop.Common.Services.LongRun.Implementation
                         {
                             return await work(_context.Cancellation.Value.Token).ConfigureAwait(false);
                         }
+                    }
+                    catch(OperationCanceledException ex)
+                    {
+                        _logger.LogInformation( $"Operation {id} - {item.Description} was cancelled.");
+                        throw;
+                    }
+                    catch(Exception ex)
+                    {
+                        _logger.LogError(ex, ex.Message);
+                        throw;
                     }
                     finally
                     {
