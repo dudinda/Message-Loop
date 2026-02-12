@@ -1,7 +1,5 @@
 ﻿using MessageLoop.Common.Models.LongRun;
 
-using Microsoft.Extensions.Logging;
-
 namespace MessageLoop.Common.Services.LongRun.Implementation
 {
     public class LongRunService<T> : ILongRunService<T> where T : LongRunItem, new()
@@ -9,14 +7,10 @@ namespace MessageLoop.Common.Services.LongRun.Implementation
         private readonly Dictionary<Guid, T> _running = new();
         private readonly Dictionary<Guid, T> _end = new();
         private readonly LongRunContext _context;
-        private readonly ILogger<LongRunService<T>> _logger;
 
-        public LongRunService(
-            LongRunContext context,
-            ILogger<LongRunService<T>> logger)
+        public LongRunService(LongRunContext context)
         {
             _context = context;
-            _logger = logger;
         }
 
         public List<T> Items => _running.Values.ToList();
@@ -55,17 +49,17 @@ namespace MessageLoop.Common.Services.LongRun.Implementation
 
         public LongRunToken PutTask(Func<CancellationToken, Task<object>> work)
         {
-            // use operationid as tokenid if operationid is guid
-            if (!Guid.TryParse(_context.OperationId?.Value, out var id))
+            if (!Guid.TryParse(_context.Id?.Value, out var id))
             {
                 id = Guid.NewGuid();
             }
 
             var result = new LongRunToken(id);
-
+            
             lock (_running)
             {
-                var item = new T() { ID = result.Id };
+                var item = new T() { Id = result.Id };
+                item.Description ??= _context.Description?.Value;
 
                 var workTask = Task.Run(async () =>
                 {
@@ -77,11 +71,6 @@ namespace MessageLoop.Common.Services.LongRun.Implementation
                         {
                             return await work(_context.Cancellation.Value.Token).ConfigureAwait(false);
                         }
-                    }
-                    catch (Exception e) when (e is not OperationCanceledException)
-                    {
-                        _logger.LogError(e, "Error on background task");
-                        throw;
                     }
                     finally
                     {
@@ -101,8 +90,6 @@ namespace MessageLoop.Common.Services.LongRun.Implementation
                     _end.Add(result.Id, item);
                 }
             }
-
-            _logger.LogDebug("Added long running task with {id}", result.Id);
 
             return result;
         }

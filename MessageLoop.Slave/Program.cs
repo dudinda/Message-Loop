@@ -1,4 +1,4 @@
-using MessageLoop.Web.Common;
+using MessageLoop.Slave;
 
 using Serilog;
 
@@ -14,7 +14,7 @@ try
         }
     }).UseSerilog().ConfigureWebHostDefaults(builder =>
     {
-        builder.UseStartup<CommonStartup>();
+        builder.UseStartup<Startup>();
         builder.UseKestrel();
     }).Build().Run();
 }

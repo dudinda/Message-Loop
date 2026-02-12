@@ -1,4 +1,4 @@
-using MessageLoop.Web.Common;
+using MessageLoop.Master;
 
 using Serilog;
 Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateBootstrapLogger();
@@ -13,7 +13,7 @@ try
         }
     }).UseSerilog().ConfigureWebHostDefaults(builder =>
     {
-        builder.UseStartup<CommonStartup>();
+        builder.UseStartup<Startup>();
         builder.UseKestrel();
     }).Build().Run();
 }
