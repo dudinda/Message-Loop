@@ -2,7 +2,7 @@
 
 using Refit;
 
-namespace MessageLoop.Master.Services.Api
+namespace MessageLoop.Web.Common.Services.Api
 {
     public interface ILongRunApi<T> where T : LongRunItem, new()
     {

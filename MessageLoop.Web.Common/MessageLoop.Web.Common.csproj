@@ -18,8 +18,4 @@
     <ProjectReference Include="..\MessageLoop.Common\MessageLoop.Common.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Code\Extensions\" />
-  </ItemGroup>
-
 </Project>

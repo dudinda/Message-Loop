@@ -46,6 +46,20 @@ namespace MessageLoop.Web.Common.Controllers.v1
 
             return Ok(token);
         }
+
+        [HttpPost("onNode")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [LongRun(Description = "Long run operation on a target node")]
+        public IActionResult StartLongRunOnNode()
+        {
+            var token = _service.PutTask(async (cncl) =>
+            {
+                return 0;
+            });
+
+            return Ok(token);
+        }
     }
 }
 
