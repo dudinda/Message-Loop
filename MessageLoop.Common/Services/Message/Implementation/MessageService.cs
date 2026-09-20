@@ -6,6 +6,8 @@ namespace MessageLoop.Service.Services.Message.Implementation
     {
         private readonly ConcurrentDictionary<string, List<BlockingCollection<TEnum>>> _msgLoops = new();
 
+        public IEnumerable<string> MsgKeys { get => _msgLoops.Keys; }
+
         /// <inheritdoc />
         public void SendMessage(string key, TEnum message)
         {

@@ -7,6 +7,8 @@ namespace MessageLoop.Service.Services.Message
 	/// </summary>
     public interface IMessageService<TEnum> where TEnum : Enum
     {
+        IEnumerable<string> MsgKeys { get; }
+
         /// <summary>
         /// Try to remove a watiing <paramref name="value"/> queue
         /// defined by the given <paramref name="key"/>.
