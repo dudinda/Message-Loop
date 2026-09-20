@@ -1,7 +1,6 @@
-using MessageLoop.Slave;
+using MessageLoop.Node;
 
 using Serilog;
-
 Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateBootstrapLogger();
 try
 {

@@ -8,7 +8,6 @@
     <File Path="StopAll.ps1" />
   </Folder>
   <Project Path="MessageLoop.Common/MessageLoop.Common.csproj" />
-  <Project Path="MessageLoop.Master/MessageLoop.Master.csproj" Id="a4dde73c-9723-4d51-b5ac-8ad8639d8df5" />
-  <Project Path="MessageLoop.Slave/MessageLoop.Slave.csproj" Id="d4d5787b-ee70-4672-a649-3ad374f90f7b" />
+  <Project Path="MessageLoop.Node/MessageLoop.Node.csproj" Id="62af522b-3e0c-4f02-9d15-1bb0d74a3fea" />
   <Project Path="MessageLoop.Web.Common/MessageLoop.Web.Common.csproj" Id="0f80f4dd-51c8-41be-ab4a-63d9ba78684f" />
 </Solution>
