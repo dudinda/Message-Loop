@@ -35,7 +35,7 @@ namespace MessageLoop.Node
 
             services.AddSingleton<LongRunContext>();
             services.AddSingleton<ILongRunService<LongRunItem>, LongRunService<LongRunItem>>();
-            services.AddOptions<LongRunOptions>().Bind(Configuration.GetSection(nameof(LongRunOptions)));
+            services.AddOptions<NodeOptions>().Bind(Configuration.GetSection(nameof(NodeOptions)));
             services.AddTransient<IScheduleService, ScheduleService>();
         }
 
