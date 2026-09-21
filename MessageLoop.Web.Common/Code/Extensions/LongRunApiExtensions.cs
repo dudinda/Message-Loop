@@ -12,9 +12,9 @@ namespace MessageLoop.Web.Common.Code.Extensions
             {
                 var id = token.Id;
                 var response = await api.GetLongRunStatus(id);
-                var status = response.Content.Status;
-
-                while (response.Content.Status != TaskStatus.RanToCompletion ||
+           
+                while (response.Content.Status != TaskStatus.RanToCompletion &&
+                       response.Content.Status != TaskStatus.Faulted && 
                        response.Content.Status != TaskStatus.Canceled)
                 {
                     if (cncl.IsCancellationRequested)
@@ -30,6 +30,7 @@ namespace MessageLoop.Web.Common.Code.Extensions
                 {
                     throw new InvalidOperationException(response.Content.Exception);
                 }
+
                 cncl.ThrowIfCancellationRequested();
                 return response.Content;
             }
