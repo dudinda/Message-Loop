@@ -6,10 +6,10 @@ namespace MessageLoop.Node.Services.Api
 {
     public interface INodeApi
     {
-        [Post("api/v{ver}/demo")]
-        Task<IApiResponse<LongRunToken>> StartLongRunOnSelf([AliasAs("ver")] int version = 1);
+        [Post("/api/v{ver}/node/onSelf")]
+        Task<IApiResponse<LongRunToken>> RunOnSelf([AliasAs("ver")] int version = 1);
 
-        [Post("api/v{ver}/demo")]
-        Task<IApiResponse<LongRunToken>> StartLongRunOnNode([AliasAs("ver")] int version = 1);
+        [Post("/api/v{ver}/node/onNode")]
+        Task<IApiResponse<LongRunToken>> RunOnNode([AliasAs("ver")] int version = 1);
     }
 }
