@@ -29,7 +29,7 @@ namespace MessageLoop.Common.Services.LongRun.Implementation
             {
                 return false;
             }
-
+            
             lock (_end)
             {
                 var t = _end[id];
@@ -50,7 +50,7 @@ namespace MessageLoop.Common.Services.LongRun.Implementation
                 }
             }
 
-            return false;
+            return true;
         }
 
         public LongRunToken PutTask(Func<CancellationToken, Task<object>> work)
