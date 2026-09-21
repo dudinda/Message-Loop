@@ -4,12 +4,12 @@ using Asp.Versioning;
 
 using MessageLoop.Common.Models.LongRun;
 using MessageLoop.Common.Services.LongRun;
+using MessageLoop.Node.Services.Schedule;
 using MessageLoop.Web.Common.Code.Filters;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MessageLoop.Web.Common.Controllers.v1
+namespace MessageLoop.Node.Controllers.v1
 {
     [ApiController, ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/demo")]
@@ -17,10 +17,14 @@ namespace MessageLoop.Web.Common.Controllers.v1
     public class DemoController : ControllerBase
     {
         private readonly ILongRunService<LongRunItem> _service;
+        private readonly IScheduleService _schedule;
 
-        public DemoController(ILongRunService<LongRunItem> service)
+        public DemoController(
+            ILongRunService<LongRunItem> service,
+            IScheduleService schedule)
         {
             _service = service;
+            _schedule = schedule;
         }
 
         [HttpPost("onSelf")]
@@ -50,7 +54,7 @@ namespace MessageLoop.Web.Common.Controllers.v1
         [HttpPost("onNode")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [LongRun(Description = "Long run operation on a target node")]
+        [LongRun(Description = $"Long run operation on a target node")]
         public IActionResult StartLongRunOnNode()
         {
             var token = _service.PutTask(async (cncl) =>
