@@ -3,9 +3,15 @@
 using MessageLoop.Common.Models.LongRun;
 using MessageLoop.Common.Services.LongRun;
 using MessageLoop.Common.Services.LongRun.Implementation;
+using MessageLoop.Node.Code.Providers;
 using MessageLoop.Node.Models;
+using MessageLoop.Node.Services.MessageLoop;
+using MessageLoop.Node.Services.MessageLoop.Implementation;
 using MessageLoop.Node.Services.Schedule;
 using MessageLoop.Node.Services.Schedule.Implementation;
+using MessageLoop.Service.Services.Message;
+using MessageLoop.Service.Services.Message.Implementation;
+using MessageLoop.Web.Common.Code.Enums;
 using MessageLoop.Web.Common.Code.Filters;
 
 using Serilog;
@@ -19,7 +25,11 @@ namespace MessageLoop.Node
             services.AddControllers(config =>
             {
                 config.Filters.Add<LongRunAttribute>();
+            }).ConfigureApplicationPartManager(manager =>
+            {
+                manager.FeatureProviders.Add(new GenericControllerProvider());
             });
+         
             services.AddSwaggerGen();
             services.AddApiVersioning(config =>
             {
@@ -32,10 +42,12 @@ namespace MessageLoop.Node
                 config.SubstituteApiVersionInUrl = true;
             });
             
-
             services.AddSingleton<LongRunContext>();
             services.AddSingleton<ILongRunService<LongRunItem>, LongRunService<LongRunItem>>();
+            services.AddSingleton<IMessageService<Messages>, MessageService<Messages>>();
+            services.AddSingleton<IMessageLoopService, MessageLoopService>();
             services.AddOptions<NodeOptions>().Bind(Configuration.GetSection(nameof(NodeOptions)));
+            services.AddOptions<MessageLoopOptions>().Bind(Configuration.GetSection(nameof(MessageLoopOptions)));
             services.AddTransient<IScheduleService, ScheduleService>();
         }
 
