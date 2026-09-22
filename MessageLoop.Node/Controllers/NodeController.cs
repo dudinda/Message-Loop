@@ -63,7 +63,7 @@ namespace MessageLoop.Node.Controllers.v1
                 var childTokens = await _schedule.RunOnChildNodes();
                 var results = await _schedule.PollChildNodes(childTokens, cncl);
 
-                return 0;
+                return results;
             });
 
             return Ok(token);
