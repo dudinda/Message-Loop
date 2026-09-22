@@ -47,11 +47,11 @@ namespace MessageLoop.Web.Common.Controllers.v1
         }
 
         [HttpPatch("abort/{tokenId}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public IActionResult Abort(Guid tokenId)
         {
             _storage.Abort(new LongRunToken(tokenId));
-            return Ok();
+            return NoContent(); 
         }    
     }
 }
