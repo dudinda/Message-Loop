@@ -12,13 +12,16 @@ namespace MessageLoop.Node.Services.MessageLoop.Implementation
     {
         private readonly IMessageService<Messages> _service;
         private readonly IOptions<MessageLoopOptions> _options;
+        private readonly ILogger<MessageLoopService> _logger;
 
         public MessageLoopService(
             IMessageService<Messages> service,
-            IOptions<MessageLoopOptions> options)
+            IOptions<MessageLoopOptions> options,
+            ILogger<MessageLoopService> logger)
         {
             _service = service;
             _options = options;
+            _logger = logger;
         }
 
         public async Task RunMessageLoop(string key, CancellationTokenSource source)
@@ -43,7 +46,7 @@ namespace MessageLoop.Node.Services.MessageLoop.Implementation
                         while (!queue.IsCompleted)
                         {
                             var msg = queue.Take(token);
-
+                            _logger.LogInformation($"Processing message: {msg}");
                             switch (msg)
                             {
                                 case var code when (code & Messages.Ok) != 0:
