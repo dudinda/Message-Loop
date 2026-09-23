@@ -4,6 +4,7 @@ using Asp.Versioning;
 
 using MessageLoop.Common.Models.LongRun;
 using MessageLoop.Common.Services.LongRun;
+using MessageLoop.Node.Services.MessageLoop;
 using MessageLoop.Node.Services.Schedule;
 using MessageLoop.Web.Common.Code.Filters;
 
@@ -18,13 +19,16 @@ namespace MessageLoop.Node.Controllers.v1
     {
         private readonly ILongRunService<LongRunItem> _service;
         private readonly IScheduleService _schedule;
+        private readonly IMessageLoopService _message;
 
         public NodeController(
             ILongRunService<LongRunItem> service,
+            IMessageLoopService message,
             IScheduleService schedule)
         {
             _service = service;
             _schedule = schedule;
+            _message = message;
         }
 
         [HttpPost("onSelf")]
@@ -35,16 +39,8 @@ namespace MessageLoop.Node.Controllers.v1
         {
             var token = _service.PutTask(async (cncl) =>
             {
-                using (var child = CancellationTokenSource.CreateLinkedTokenSource(cncl))
-                {
-                    child.CancelAfter(TimeSpan.FromSeconds(300));
-                    var token = child.Token;
-                    while (!token.IsCancellationRequested)
-                    {
-                        await Task.Delay(TimeSpan.FromSeconds(5), token);
-                    }
-                    token.ThrowIfCancellationRequested();
-                }
+                using var source = CancellationTokenSource.CreateLinkedTokenSource(cncl);
+                await _message.RunMessageLoop(nameof(RunOnSelf), source);
 
                 return 0;
             });
