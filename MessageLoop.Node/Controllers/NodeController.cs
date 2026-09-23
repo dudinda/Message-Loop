@@ -37,12 +37,13 @@ namespace MessageLoop.Node.Controllers.v1
         [LongRun(Description = "Long run operation on the self")]
         public IActionResult RunOnSelf()
         {
+            var host = Request.Host.Value;
             var token = _service.PutTask(async (cncl) =>
             {
                 using var source = CancellationTokenSource.CreateLinkedTokenSource(cncl);
                 await _message.RunMessageLoop(nameof(RunOnSelf), source);
 
-                return 0;
+                return $"Operation completed. Host:{host}";
             });
 
             return Ok(token);
@@ -51,14 +52,15 @@ namespace MessageLoop.Node.Controllers.v1
         [HttpPost("onNode")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [LongRun(Description = $"Long run operation on a target node")]
+        [LongRun(Description = "Long run operation on a target node")]
         public IActionResult RunOnNode()
         {
+            var host = Request.Host.Value;
             var token = _service.PutTask(async (cncl) =>
             {
                 var childTokens = await _schedule.RunOnChildNodes();
                 var results = await _schedule.PollChildNodes(childTokens, cncl);
-
+                results.ForEach(result => result.ExtraData = $"Operation completed. Host:{host}");
                 return results;
             });
 
