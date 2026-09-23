@@ -7,6 +7,7 @@ Start-Process `
 		"NodeOptions__IsRoot"="true"
 		"NodeOptions__ChildNodes__0"="http://localhost:5001"
 		"NodeOptions__ChildNodes__1"="http://localhost:5002"
+		"NodeOptions__ChildNodes__2"="http://localhost:5003"
 	}
 
 Start-Process `
@@ -14,6 +15,7 @@ Start-Process `
 	-ArgumentList "--urls=http://localhost:5001" `
 	-Environment @{ 
 		"NodeOptions__ChildNodes__0"="http://localhost:5002"
+		"NodeOptions__ChildNodes__1"="http://localhost:5003"
 	}
 
 Start-Process `
