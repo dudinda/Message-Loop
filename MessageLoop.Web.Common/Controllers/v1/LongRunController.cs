@@ -7,7 +7,6 @@ using MessageLoop.Common.Services.LongRun;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace MessageLoop.Web.Common.Controllers.v1
 {
@@ -17,14 +16,11 @@ namespace MessageLoop.Web.Common.Controllers.v1
     public class LongRunController : ControllerBase
     {
         private readonly ILongRunService<LongRunItem> _storage;
-		private readonly ILogger<LongRunController> _logger;
 
 		public LongRunController(
-              ILongRunService<LongRunItem> storage,
-			  ILogger<LongRunController> logger)
+              ILongRunService<LongRunItem> storage)
         {
             _storage = storage;
-			_logger = logger;
         }
 
         [HttpGet("{tokenId}")]
