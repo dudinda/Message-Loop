@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 
-using MessageLoop.Common.Models.LongRun;
 using MessageLoop.Node.Models;
 using MessageLoop.Service.Services.Message;
 using MessageLoop.Web.Common.Code.Enums;
@@ -13,19 +12,16 @@ namespace MessageLoop.Node.Services.MessageLoop.Implementation
     {
         private readonly IMessageService<Messages> _service;
         private readonly IOptions<MessageLoopOptions> _options;
-        private readonly LongRunContext _context;
 
         public MessageLoopService(
             IMessageService<Messages> service,
-            IOptions<MessageLoopOptions> options,
-            LongRunContext context)
+            IOptions<MessageLoopOptions> options)
         {
             _service = service;
-            _context = context;
             _options = options;
         }
 
-        public async Task RunMessageLoop(string key)
+        public async Task RunMessageLoop(string key, CancellationTokenSource source)
         {
             var queue = new BlockingCollection<Messages>();
             _service.Add(key, queue);
@@ -33,9 +29,7 @@ namespace MessageLoop.Node.Services.MessageLoop.Implementation
             var opt = _options.Value;
             try
             {
-                var source = _context.Cancellation.Value;
                 var parentToken = source.Token;
-
                 parentToken.ThrowIfCancellationRequested();
                 using (var cancel = CancellationTokenSource.CreateLinkedTokenSource(parentToken))
                 {
@@ -46,7 +40,7 @@ namespace MessageLoop.Node.Services.MessageLoop.Implementation
                     var maxFails = opt.MaxFails;
                     try
                     {
-                        while (queue.IsCompleted)
+                        while (!queue.IsCompleted)
                         {
                             var msg = queue.Take(token);
 
@@ -77,7 +71,7 @@ namespace MessageLoop.Node.Services.MessageLoop.Implementation
                                 throw new Exception($"Too many fails inside the loop.");
                             }
 
-                            await Task.Delay(opt.LoopFrequencyMs);
+                            await Task.Delay(opt.LoopFrequencyMs, token);
                         }
                     }
                     catch (OperationCanceledException e)
