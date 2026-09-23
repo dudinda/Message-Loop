@@ -12,6 +12,6 @@
         Message_2 = 1 << 3,
         Message_3 = 1 << 4,
 
-        Cancel = 1 << 32
+        Cancel = 1 << 31
     }
 }
