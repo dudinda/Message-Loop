@@ -6,7 +6,7 @@ namespace MessageLoop.Common.Models.LongRun
     {
         public Guid Id { get; internal set; } = Guid.NewGuid();
 
-        public string Description { get; internal set;  }
+        public string Description { get; internal set; }
 
         [JsonIgnore]
         public CancellationTokenSource Cancellation { get; private set; } = new CancellationTokenSource();
