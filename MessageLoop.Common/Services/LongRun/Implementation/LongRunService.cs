@@ -39,7 +39,7 @@ namespace MessageLoop.Common.Services.LongRun.Implementation
 
                 if (result.Status == TaskStatus.RanToCompletion)
                 {
-                    result.Data = t.Execution.Result;
+                    result.Result = t.Execution.Result;
                 }
 
                 if (result.Status == TaskStatus.RanToCompletion ||
