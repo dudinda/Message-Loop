@@ -4,6 +4,7 @@ using Asp.Versioning;
 
 using MessageLoop.Common.Models.LongRun;
 using MessageLoop.Common.Services.LongRun;
+using MessageLoop.Node.Code.Extensions;
 using MessageLoop.Node.Services.MessageLoop;
 using MessageLoop.Node.Services.Schedule;
 using MessageLoop.Web.Common.Code.Filters;
@@ -37,12 +38,13 @@ namespace MessageLoop.Node.Controllers.v1
         [LongRun(Description = "Long run operation on the self")]
         public IActionResult RunOnSelf()
         {
+            var host = Request.Host.Value;
             var token = _service.PutTask(async (cncl) =>
             {
                 using var source = CancellationTokenSource.CreateLinkedTokenSource(cncl);
                 await _message.RunMessageLoop(nameof(RunOnSelf), source);
 
-                return 0;
+                return $"Operation completed on {host}"; 
             });
 
             return Ok(token);
@@ -54,12 +56,13 @@ namespace MessageLoop.Node.Controllers.v1
         [LongRun(Description = $"Long run operation on a target node")]
         public IActionResult RunOnNode()
         {
+            var host = Request.Host.Value;
             var token = _service.PutTask(async (cncl) =>
             {
                 var childTokens = await _schedule.RunOnChildNodes();
                 var results = await _schedule.PollChildNodes(childTokens, cncl);
 
-                return results;
+                return $"Operation completed on {host}".BuildDataTree(results);
             });
 
             return Ok(token);
