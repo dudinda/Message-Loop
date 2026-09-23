@@ -49,23 +49,23 @@ namespace MessageLoop.Node.Services.MessageLoop.Implementation
                             _logger.LogInformation($"Processing message: {msg}");
                             switch (msg)
                             {
-                                case var code when (code & Messages.Ok) != 0:
+                                case Messages.Ok:
                                     queue.CompleteAdding();
                                     break;
-                                case var code when (code & Messages.Fail) != 0:
+                                case Messages.Fail:
                                     ++failsCount;
                                     break;
-                                case var code when (code & Messages.Cancel) != 0:
+                                case Messages.Cancel:
                                     source.Cancel();
                                     break;
 
-                                case var code when (code & Messages.Message_1) != 0:
+                                case Messages.Message_1:
                                     break;
-                                case var code when (code & Messages.Message_2) != 0:
+                                case Messages.Message_2:
                                     break;
-                                case var code when (code & Messages.Message_1 | Messages.Message_2) != 0:
+                                case Messages.Message_1 | Messages.Message_2:
                                     break;
-                                case var code when (code & Messages.Message_2 | Messages.Message_3) != 0:
+                                case Messages.Message_2 | Messages.Message_3:
                                     break;
                             }
 
