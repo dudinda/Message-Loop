@@ -3,7 +3,6 @@
 using MessageLoop.Common.Models.LongRun;
 using MessageLoop.Common.Services.LongRun;
 using MessageLoop.Common.Services.LongRun.Implementation;
-using MessageLoop.Node.Code.Mvc;
 using MessageLoop.Node.Models;
 using MessageLoop.Node.Services.MessageLoop;
 using MessageLoop.Node.Services.MessageLoop.Implementation;
@@ -13,6 +12,7 @@ using MessageLoop.Service.Services.Message;
 using MessageLoop.Service.Services.Message.Implementation;
 using MessageLoop.Web.Common.Code.Enums;
 using MessageLoop.Web.Common.Code.Filters;
+using MessageLoop.Web.Common.Code.Mvc;
 
 using Serilog;
 
@@ -25,10 +25,10 @@ namespace MessageLoop.Node
             services.AddControllers(config =>
             {
                 config.Filters.Add<LongRunAttribute>();
-                config.Conventions.Add(new MessageControllerConvention());
+                config.Conventions.Add(new MessageControllerConvention<Messages>());
             }).ConfigureApplicationPartManager(manager =>
             {
-                manager.FeatureProviders.Add(new GenericControllerProvider());
+                manager.FeatureProviders.Add(new GenericControllerProvider<Messages>());
             });
          
             services.AddSwaggerGen();
