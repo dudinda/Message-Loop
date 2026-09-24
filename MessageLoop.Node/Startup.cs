@@ -14,6 +14,8 @@ using MessageLoop.Web.Common.Code.Enums;
 using MessageLoop.Web.Common.Code.Filters;
 using MessageLoop.Web.Common.Code.Mvc;
 
+using Microsoft.OpenApi;
+
 using Serilog;
 
 namespace MessageLoop.Node
@@ -31,7 +33,14 @@ namespace MessageLoop.Node
                 manager.FeatureProviders.Add(new MessageControllerProvider<Messages>());
             });
          
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(opt =>
+            {
+                opt.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = nameof(MessageLoop.Node),
+                    Version = "v1"
+                });
+            });
             services.AddApiVersioning(config =>
             {
                 config.DefaultApiVersion = new ApiVersion(1, 0);
@@ -61,7 +70,10 @@ namespace MessageLoop.Node
                 endpoints.MapControllers();
             });
             app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseSwaggerUI((opt) =>
+            {
+                opt.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+            });
         }
     }
 }
