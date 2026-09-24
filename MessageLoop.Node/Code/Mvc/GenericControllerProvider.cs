@@ -6,7 +6,7 @@ using MessageLoop.Web.Common.Controllers.v1;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
 
-namespace MessageLoop.Node.Code.Providers
+namespace MessageLoop.Node.Code.Mvc
 {
     public class GenericControllerProvider : IApplicationFeatureProvider<ControllerFeature>
     {

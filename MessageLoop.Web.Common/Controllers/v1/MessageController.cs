@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace MessageLoop.Web.Common.Controllers.v1
 {
     [ApiController, ApiVersion("1.0")]
-    [Route("api/v{version:apiVersion}/message")]
+    [Route("api/v{version:apiVersion}")]
     [Produces(MediaTypeNames.Application.Json)]
     public class MessageController<TEnum> : ControllerBase where TEnum : Enum
     {

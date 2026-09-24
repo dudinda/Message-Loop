@@ -3,7 +3,7 @@
 using MessageLoop.Common.Models.LongRun;
 using MessageLoop.Common.Services.LongRun;
 using MessageLoop.Common.Services.LongRun.Implementation;
-using MessageLoop.Node.Code.Providers;
+using MessageLoop.Node.Code.Mvc;
 using MessageLoop.Node.Models;
 using MessageLoop.Node.Services.MessageLoop;
 using MessageLoop.Node.Services.MessageLoop.Implementation;
@@ -25,6 +25,7 @@ namespace MessageLoop.Node
             services.AddControllers(config =>
             {
                 config.Filters.Add<LongRunAttribute>();
+                config.Conventions.Add(new MessageControllerConvention());
             }).ConfigureApplicationPartManager(manager =>
             {
                 manager.FeatureProviders.Add(new GenericControllerProvider());
