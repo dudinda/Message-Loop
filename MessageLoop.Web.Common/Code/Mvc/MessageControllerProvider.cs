@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 
 namespace MessageLoop.Web.Common.Code.Mvc
 {
-    public class GenericControllerProvider<TEnum> : IApplicationFeatureProvider<ControllerFeature> where TEnum : Enum
+    public class MessageControllerProvider<TEnum> : IApplicationFeatureProvider<ControllerFeature> where TEnum : Enum
     {
         public void PopulateFeature(
             IEnumerable<ApplicationPart> parts,

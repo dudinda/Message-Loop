@@ -28,7 +28,7 @@ namespace MessageLoop.Node
                 config.Conventions.Add(new MessageControllerConvention<Messages>());
             }).ConfigureApplicationPartManager(manager =>
             {
-                manager.FeatureProviders.Add(new GenericControllerProvider<Messages>());
+                manager.FeatureProviders.Add(new MessageControllerProvider<Messages>());
             });
          
             services.AddSwaggerGen();
