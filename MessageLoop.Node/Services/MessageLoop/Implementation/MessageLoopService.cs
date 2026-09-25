@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 
-using MessageLoop.Node.Models;
+using MessageLoop.Node.Models.Options;
 using MessageLoop.Service.Services.Message;
 using MessageLoop.Web.Common.Code.Enums;
 

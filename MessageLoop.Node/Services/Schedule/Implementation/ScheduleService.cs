@@ -1,5 +1,5 @@
 ﻿using MessageLoop.Common.Models.LongRun;
-using MessageLoop.Node.Models;
+using MessageLoop.Node.Models.Options;
 using MessageLoop.Node.Services.Api;
 using MessageLoop.Web.Common.Code.Extensions;
 using MessageLoop.Web.Common.Services.Api;
@@ -12,15 +12,12 @@ namespace MessageLoop.Node.Services.Schedule.Implementation
 {
     public class ScheduleService : IScheduleService
     {
-        private readonly ILogger<ScheduleService> _logger;
         private readonly IOptions<NodeOptions> _options;
         private readonly Dictionary<Guid, ILongRunApi<LongRunItem>> _map = new();
 
         public ScheduleService(
-            ILogger<ScheduleService> logger,
             IOptions<NodeOptions> options)
         {
-            _logger = logger;
             _options = options;
         }
 

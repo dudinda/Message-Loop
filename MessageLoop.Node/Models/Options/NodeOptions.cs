@@ -1,4 +1,4 @@
-﻿namespace MessageLoop.Node.Models
+﻿namespace MessageLoop.Node.Models.Options
 {
     public class NodeOptions
     {

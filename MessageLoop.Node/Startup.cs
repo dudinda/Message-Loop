@@ -3,7 +3,7 @@
 using MessageLoop.Common.Models.LongRun;
 using MessageLoop.Common.Services.LongRun;
 using MessageLoop.Common.Services.LongRun.Implementation;
-using MessageLoop.Node.Models;
+using MessageLoop.Node.Models.Options;
 using MessageLoop.Node.Services.MessageLoop;
 using MessageLoop.Node.Services.MessageLoop.Implementation;
 using MessageLoop.Node.Services.Schedule;
