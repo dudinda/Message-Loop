@@ -8,9 +8,9 @@ namespace MessageLoop.Node.Code.Extensions
     {
         extension (string str)
         {
-            public string BuildDataTree(List<LongRunResult> results)
+            public string BuildDataTree(IEnumerable<LongRunResult> results)
             {
-                if (results.Count == 0)
+                if (!results.Any())
                 {
                     return str;
                 }
