@@ -4,7 +4,7 @@ using Asp.Versioning;
 
 using MessageLoop.Common.Models.LongRun;
 using MessageLoop.Common.Services.LongRun;
-using MessageLoop.Node.Code.Extensions;
+using MessageLoop.Node.Models;
 using MessageLoop.Node.Services.MessageLoop;
 using MessageLoop.Node.Services.Schedule;
 using MessageLoop.Web.Common.Code.Filters;
@@ -44,7 +44,7 @@ namespace MessageLoop.Node.Controllers.v1
                 using var source = CancellationTokenSource.CreateLinkedTokenSource(cncl);
                 await _message.RunMessageLoop(nameof(RunOnSelf), source);
 
-                return $"Operation completed on {host}"; 
+                return $"Operation completed on {host}";
             });
 
             return Ok(token);
@@ -61,7 +61,12 @@ namespace MessageLoop.Node.Controllers.v1
             {
                 var childTokens = await _schedule.RunOnChildNodes();
                 var results = await _schedule.PollChildNodes(childTokens, cncl);
-                return$"Operation completed on {host}".BuildDataTree(results);
+
+                return new NodeResult()
+                {
+                    Result = $"Operation completed on {host}",
+                    ChildResults = results
+                };
             });
 
             return Ok(token);
