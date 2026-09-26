@@ -6,14 +6,14 @@ namespace MessageLoop.Service.Services.Message.Implementation
     {
         private readonly ConcurrentDictionary<string, List<BlockingCollection<TEnum>>> _msgLoops = new();
 
-        public IEnumerable<string> MsgKeys { get => _msgLoops.Keys; }
+        public IEnumerable<string> LoopKeys { get => _msgLoops.Keys; }
 
         /// <inheritdoc />
         public void SendMessage(string key, TEnum message)
         {
             if (!_msgLoops.TryGetValue(key, out var msgLoop))
             {
-                throw new InvalidOperationException($"Message loop by the {key} is not found.");
+                throw new InvalidOperationException($"Message loops with the {key} could not be found.");
             }
 
             lock (_msgLoops)
