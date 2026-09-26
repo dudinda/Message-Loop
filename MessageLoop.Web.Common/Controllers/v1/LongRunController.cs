@@ -4,6 +4,7 @@ using Asp.Versioning;
 
 using MessageLoop.Common.Models.LongRun;
 using MessageLoop.Common.Services.LongRun;
+using MessageLoop.Web.Common.Code.Constants;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +31,8 @@ namespace MessageLoop.Web.Common.Controllers.v1
 		{
             if (!_storage.TryGetResult(tokenId, out var token))
             {
-                return NotFound();
+                return Problem(string.Format(NotFoundDetails.TokenNotFound, tokenId),
+                    statusCode: StatusCodes.Status404NotFound);
             }
             return Ok(token);
 		}
