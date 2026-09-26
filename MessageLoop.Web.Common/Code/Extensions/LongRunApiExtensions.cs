@@ -8,7 +8,7 @@ namespace MessageLoop.Web.Common.Code.Extensions
         extension <T>(ILongRunApi<T> api)
             where T: LongRunItem, new() 
         {
-            public async Task<LongRunResult> Poll(LongRunToken token, CancellationToken cncl)
+            public async Task<LongRunResult> Poll(LongRunToken token, CancellationToken cncl, int pollFreqMs = 1000)
             {
                 var id = token.Id;
                 var response = await api.GetLongRunStatus(id);
@@ -22,7 +22,7 @@ namespace MessageLoop.Web.Common.Code.Extensions
                         await api.Abort(id);
                     }
 
-                    await Task.Delay(TimeSpan.FromMilliseconds(1000));
+                    await Task.Delay(TimeSpan.FromMilliseconds(pollFreqMs));
                     response = await api.GetLongRunStatus(id);
                 }
 
