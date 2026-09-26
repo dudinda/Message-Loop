@@ -34,7 +34,7 @@ namespace MessageLoop.Node.Services.Schedule.Implementation
                 var response = await api.RunOnNode();
                 if (!response.IsSuccessStatusCode)
                 {
-                    throw new InvalidOperationException(response.Error.Content);
+                    throw new InvalidOperationException(response.Error.Message);
                 }
                 result.Add(response.Content);
                 _map.Add(response.Content.Id, RestService.For<ILongRunApi<LongRunItem>>(url));

@@ -7,10 +7,10 @@ namespace MessageLoop.Service.Services.Message
 	/// </summary>
     public interface IMessageService<TEnum> where TEnum : Enum
     {
-        IEnumerable<string> MsgKeys { get; }
+        IEnumerable<string> LoopKeys { get; }
 
         /// <summary>
-        /// Try to remove a watiing <paramref name="value"/> queue
+        /// Try to remove a waiting <paramref name="value"/> queue
         /// defined by the given <paramref name="key"/>.
         /// </summary>
         bool TryRemove(string key, BlockingCollection<TEnum> value);
@@ -22,7 +22,7 @@ namespace MessageLoop.Service.Services.Message
         void Add(string key, BlockingCollection<TEnum> value);
 
         /// <summary>
-        /// Determines whether a waiting queue defined by the given <paramref name="key"/>.
+        /// Determine whether a waiting queue defined by the given <paramref name="key"/> exists.
         /// </summary>
         bool Contains(string key);
 
