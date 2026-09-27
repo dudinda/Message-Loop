@@ -3,14 +3,14 @@ using System.Threading.Channels;
 
 namespace MessageLoop.Service.Services.Message.Implementation
 {
-    public class MessageService<TEnum> : IMessageService<TEnum> 
+    public class MessageService<TMessage> : IMessageService<TMessage> 
     {
-        private readonly ConcurrentDictionary<string, List<Channel<TEnum>>> _msgLoops = new();
+        private readonly ConcurrentDictionary<string, List<Channel<TMessage>>> _msgLoops = new();
 
         public IEnumerable<string> LoopKeys { get => _msgLoops.Keys; }
 
         /// <inheritdoc />
-        public void SendMessage(string key, TEnum message)
+        public void SendMessage(string key, TMessage message)
         {
             if (!_msgLoops.TryGetValue(key, out var msgLoop))
             {
@@ -35,20 +35,20 @@ namespace MessageLoop.Service.Services.Message.Implementation
         }
 
         /// <inheritdoc />
-        public void Add(string key, Channel<TEnum> value)
+        public void Add(string key, Channel<TMessage> value)
         {
             lock (_msgLoops)
             {
-                _msgLoops.GetOrAdd(key, (k) => new List<Channel<TEnum>>() ).Add(value);
+                _msgLoops.GetOrAdd(key, (k) => new List<Channel<TMessage>>() ).Add(value);
             }
         }
 
         /// <inheritdoc />
-        public bool TryRemove(string key, Channel<TEnum> value)
+        public bool TryRemove(string key, Channel<TMessage> value)
         {
             lock (_msgLoops)
             {
-                var msgLoop = _msgLoops.GetOrAdd(key, (k) =>  new List<Channel<TEnum>>() );
+                var msgLoop = _msgLoops.GetOrAdd(key, (k) =>  new List<Channel<TMessage>>() );
 
                 msgLoop.Remove(value);
 
@@ -61,10 +61,6 @@ namespace MessageLoop.Service.Services.Message.Implementation
             return false;
         }
 
-        /// <summary>
-        /// Release all the waiting threads.
-        /// Used by a DI-container in a singleton scope.
-        /// </summary>
         public void Dispose()
         {
             lock (_msgLoops)
