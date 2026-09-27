@@ -5,7 +5,7 @@ namespace MessageLoop.Service.Services.Message
     /// <summary>
 	/// Provides a service that allows to send messages to a waiting thread via a waiting queue.
 	/// </summary>
-    public interface IMessageService<TMessage> 
+    public interface IMessageService<TMessage> : IDisposable
     {
         IEnumerable<string> LoopKeys { get; }
 
