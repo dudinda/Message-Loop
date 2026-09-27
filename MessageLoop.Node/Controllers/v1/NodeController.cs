@@ -41,9 +41,7 @@ namespace MessageLoop.Node.Controllers.v1
             var host = Request.Host.Value;
             var token = _service.PutTask(async (cncl) =>
             {
-                using var source = CancellationTokenSource.CreateLinkedTokenSource(cncl);
-                await _message.RunMessageLoop(nameof(RunOnSelf), source);
-
+                await _message.RunMessageLoop(nameof(RunOnSelf), cncl);
                 return $"Operation completed on {host}";
             });
 

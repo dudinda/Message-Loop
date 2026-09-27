@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+﻿using System.Threading.Channels;
 
 using MessageLoop.Node.Models.Options;
 using MessageLoop.Service.Services.Message;
@@ -24,28 +24,28 @@ namespace MessageLoop.Node.Services.MessageLoop.Implementation
             _logger = logger;
         }
 
-        public async Task RunMessageLoop(string key, CancellationTokenSource source)
+        public async Task RunMessageLoop(string key, CancellationToken token)
         {
-            var queue = new BlockingCollection<Messages>();
-            _service.Add(key, queue);
+            using var parent = CancellationTokenSource.CreateLinkedTokenSource(token);
+            var channel = Channel.CreateUnbounded<Messages>();
+            _service.Add(key, channel);
 
             var opt = _options.Value;
             try
             {
-                var parentToken = source.Token;
+                var parentToken = parent.Token;
                 parentToken.ThrowIfCancellationRequested();
                 using (var cancel = CancellationTokenSource.CreateLinkedTokenSource(parentToken))
                 {
                     cancel.CancelAfter(opt.LoopTimeoutMs);
-                    var token = cancel.Token;
+                    var childToken = cancel.Token;
 
                     int failsCount = 0;
                     var maxFails = opt.MaxFails;
                     try
                     {
-                        while (!queue.IsCompleted)
+                        await foreach (var msg in channel.Reader.ReadAllAsync(childToken))
                         {
-                            var msg = queue.Take(token);
                             _logger.LogInformation($"Processing message: {msg}");
                             switch (msg)
                             {
@@ -70,24 +70,24 @@ namespace MessageLoop.Node.Services.MessageLoop.Implementation
 
 
                                 case Messages.Cancel:
-                                    source.Cancel();
+                                    parent.Cancel();
                                     break;
                                 case Messages.Ok:
-                                    queue.CompleteAdding();
+                                    channel.Writer.TryComplete();
                                     break;
                             }
 
-                            if (maxFails  > 0 && failsCount >= maxFails)
+                            if (maxFails > 0 && failsCount >= maxFails)
                             {
                                 throw new Exception($"Too many fails inside the loop.");
                             }
 
-                            await Task.Delay(opt.LoopFrequencyMs, token);
+                            await Task.Delay(opt.LoopFrequencyMs, childToken);
                         }
                     }
                     catch (OperationCanceledException e)
                     {
-                        if (source.IsCancellationRequested)
+                        if (parent.IsCancellationRequested)
                         {
                             throw;
                         }
@@ -98,7 +98,7 @@ namespace MessageLoop.Node.Services.MessageLoop.Implementation
             }
             finally
             {
-                _service.TryRemove(key, queue);
+                _service.TryRemove(key, channel);
             }
         }
     }

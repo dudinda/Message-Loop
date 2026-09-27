@@ -2,6 +2,6 @@
 {
     public interface IMessageLoopService
     {
-        Task RunMessageLoop(string key, CancellationTokenSource source);
+        Task RunMessageLoop(string key, CancellationToken source);
     }
 }

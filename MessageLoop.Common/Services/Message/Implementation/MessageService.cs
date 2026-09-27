@@ -1,10 +1,11 @@
 ﻿using System.Collections.Concurrent;
+using System.Threading.Channels;
 
 namespace MessageLoop.Service.Services.Message.Implementation
 {
-    public class MessageService<TEnum> : IMessageService<TEnum> where TEnum : Enum
+    public class MessageService<TEnum> : IMessageService<TEnum> 
     {
-        private readonly ConcurrentDictionary<string, List<BlockingCollection<TEnum>>> _msgLoops = new();
+        private readonly ConcurrentDictionary<string, List<Channel<TEnum>>> _msgLoops = new();
 
         public IEnumerable<string> LoopKeys { get => _msgLoops.Keys; }
 
@@ -18,12 +19,9 @@ namespace MessageLoop.Service.Services.Message.Implementation
 
             lock (_msgLoops)
             {
-                for (var i = 0; i < msgLoop.Count; ++i)
+                foreach (var channel in msgLoop)
                 {
-                    if (!msgLoop[i].IsAddingCompleted)
-                    {
-                        msgLoop[i].Add(message);
-                    }
+                    channel.Writer.TryWrite(message);
                 }
             }
         }
@@ -37,20 +35,20 @@ namespace MessageLoop.Service.Services.Message.Implementation
         }
 
         /// <inheritdoc />
-        public void Add(string key, BlockingCollection<TEnum> value)
+        public void Add(string key, Channel<TEnum> value)
         {
             lock (_msgLoops)
             {
-                _msgLoops.GetOrAdd(key, (k) => new List<BlockingCollection<TEnum>>() ).Add(value);
+                _msgLoops.GetOrAdd(key, (k) => new List<Channel<TEnum>>() ).Add(value);
             }
         }
 
         /// <inheritdoc />
-        public bool TryRemove(string key, BlockingCollection<TEnum> value)
+        public bool TryRemove(string key, Channel<TEnum> value)
         {
             lock (_msgLoops)
             {
-                var msgLoop = _msgLoops.GetOrAdd(key, (k) =>  new List<BlockingCollection<TEnum>>() );
+                var msgLoop = _msgLoops.GetOrAdd(key, (k) =>  new List<Channel<TEnum>>() );
 
                 msgLoop.Remove(value);
 
