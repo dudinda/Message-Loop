@@ -46,11 +46,19 @@ namespace MessageLoop.Service.Services.Message.Implementation
         /// <inheritdoc />
         public bool TryRemove(string key, Channel<TMessage> value)
         {
+            if (!value.Writer.TryComplete())
+            {
+                return false;
+            }
+
             lock (_msgLoops)
             {
                 var msgLoop = _msgLoops.GetOrAdd(key, (k) =>  new List<Channel<TMessage>>() );
 
-                msgLoop.Remove(value);
+                if(!msgLoop.Remove(value))
+                {
+                    return false;
+                }
 
                 if (msgLoop.Count == 0)
                 {
@@ -58,13 +66,22 @@ namespace MessageLoop.Service.Services.Message.Implementation
                 }
             }
 
-            return false;
+            return true;
         }
 
         public void Dispose()
         {
             lock (_msgLoops)
             {
+                foreach(var kv in _msgLoops)
+                {
+                    var key = kv.Key;
+                    foreach(var loop in kv.Value)
+                    {
+                        TryRemove(kv.Key, loop);
+                    }
+                    
+                }
                 _msgLoops.Clear();
             }
         }
