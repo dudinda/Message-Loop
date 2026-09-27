@@ -2,6 +2,7 @@
 {
     public class NodeOptions
     {
+        public bool Break { get; set; }
         public string[] ChildNodes { get; set; }
     }
 }
