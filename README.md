@@ -4,7 +4,7 @@ Part of the proposed interfaces were implemented between 2020 and 2024 while bui
 
 1. [Overview](#overview)  
    - [Custom Topology On Ports](#custom-topology-on-ports)
-   - [Message Loop](#message-loop)
+   - [Message Loop](#message-loop-1)
 2. [Managing Long-Running Operations](#managing-long-running-operations)
    - [Polling](#polling)
 3. [Managing Messages](#managing-messages)
