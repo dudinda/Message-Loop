@@ -1,28 +1,39 @@
-﻿using System.Collections.Concurrent;
-using System.Threading.Channels;
+﻿using System.Threading.Channels;
 
 namespace MessageLoop.Service.Services.Message.Implementation
 {
     public class MessageService<TMessage> : IMessageService<TMessage> 
     {
-        private readonly ConcurrentDictionary<string, List<Channel<TMessage>>> _msgLoops = new();
+        private readonly object _lock = new object();
+        private readonly Dictionary<string, List<Channel<TMessage>>> _msgLoops = new();
 
-        public IEnumerable<string> LoopKeys { get => _msgLoops.Keys; }
+        public IEnumerable<string> LoopKeys
+        {
+            get
+            {
+                lock(_lock)
+                {
+                    return _msgLoops.Keys.ToArray();
+                }
+            }
+        }
 
         /// <inheritdoc />
         public void SendMessage(string key, TMessage message)
         {
-            if (!_msgLoops.TryGetValue(key, out var msgLoop))
+            Channel<TMessage>[] channels;
+            lock(_lock)
             {
-                throw new InvalidOperationException($"Message loops with the {key} could not be found.");
+                if (!_msgLoops.TryGetValue(key, out var msgLoop))
+                {
+                    throw new InvalidOperationException($"Message loops with the {key} could not be found.");
+                }
+                channels = msgLoop.ToArray();
             }
 
-            lock (_msgLoops)
+            foreach (var channel in channels)
             {
-                foreach (var channel in msgLoop)
-                {
-                    channel.Writer.TryWrite(message);
-                }
+                channel.Writer.TryWrite(message);
             }
         }
 
@@ -39,21 +50,24 @@ namespace MessageLoop.Service.Services.Message.Implementation
         {
             lock (_msgLoops)
             {
-                _msgLoops.GetOrAdd(key, (k) => new List<Channel<TMessage>>() ).Add(value);
+                if(!_msgLoops.TryGetValue(key, out var msgLoop))
+                {
+                    msgLoop = new List<Channel<TMessage>>();
+                    _msgLoops.Add(key, msgLoop);
+                }
+                msgLoop.Add(value);
             }
         }
 
         /// <inheritdoc />
         public bool TryRemove(string key, Channel<TMessage> value)
         {
-            if (!value.Writer.TryComplete())
-            {
-                return false;
-            }
-
             lock (_msgLoops)
             {
-                var msgLoop = _msgLoops.GetOrAdd(key, (k) =>  new List<Channel<TMessage>>() );
+                if(!_msgLoops.TryGetValue(key, out var msgLoop))
+                {
+                    return false;
+                }
 
                 if(!msgLoop.Remove(value))
                 {
@@ -66,23 +80,22 @@ namespace MessageLoop.Service.Services.Message.Implementation
                 }
             }
 
+            value.Writer.TryComplete();
             return true;
         }
 
         public void Dispose()
         {
+            Channel<TMessage>[] channels;
             lock (_msgLoops)
             {
-                foreach(var kv in _msgLoops)
-                {
-                    var key = kv.Key;
-                    foreach(var loop in kv.Value)
-                    {
-                        TryRemove(kv.Key, loop);
-                    }
-                    
-                }
+                channels = _msgLoops.Values.SelectMany(_ => _).ToArray();
                 _msgLoops.Clear();
+            }
+            
+            foreach(var channel in channels)
+            {
+                channel.Writer.TryComplete();
             }
         }
     }
