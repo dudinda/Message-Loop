@@ -4,7 +4,7 @@ Part of the proposed interfaces were implemented between 2020 and 2024 while bui
 
 1. [Overview](#overview)  
    - [Custom Topology On Ports](#custom-topology-on-ports)
-   - [Message-Loop](#message-loop)
+   - [Message Loop](#message-loop)
 2. [Managing Long-Running Operations](#managing-long-running-operations)
    - [Polling](#polling)
 3. [Managing Messages](#managing-messages)
@@ -147,7 +147,13 @@ It is also possible to format the response using an extension method. Calling `B
 
 <p align="center">Fig. 4 - Example of the output produced by returning the result from the <code>onNode</code> action, using the <code>BuildDataTree</code> extension. The output has been formatted to improve readability.</p>
 
-### Message-Loop
+### Message Loop
+
+Sometimes, an advanced workflow may require messaging between operations or propagating signals to another process. To avoid introducing external libraries or additional processes to consume messages, the system provides an interface containing a wrapper around a set of `Channel<T>` instances, which can be used to build a message loop within the application.
+
+Since ` IMessageService<TMessage>` has a singleton scope, its usage is not limited to the Web API-to-loop relationship; it also supports loop-to-loop communication. In this demo, there is an example of several custom messages used to manage the workflow: `Message.OK` to break out of the loop, `Message.Cancel` to trigger external cancellation, and `Message.Fail` to signal to the loop that an error occurred.
+
+The exact implementation can be found in [MessageLoopService.cs](https://github.com/dudinda/Message-Loop/blob/master/MessageLoop.Node/Services/MessageLoop/Implementation/MessageLoopService.cs).
 
 ## Managing Long-Running Operations
 
