@@ -157,7 +157,34 @@ The exact implementation can be found in [MessageLoopService.cs](https://github.
 
 ## Managing Long-Running Operations
 
+There are several related components that allow the subsystem to be built. The `ILongRunService<T>` binds a task with a unique identifier, maintaining two maps of running and completed operations. Additionally, the service captures a context containing ambient data, some properties of which can be initialized at the filter level or to accessed within a subsequent asynchronous workflow. Through the `TryGetResult` method, the service extracts a resulting token containing the current `TaskStatus`, `Exception`, and if the task has completed, the final result. 
+
+To manage long-running operations using a WEB API, the system provides the `LongRunController`. Its main purpose is to retrieve a `LongRunResult` by sending a `GET` HTTP request with a unique identifier. If a background workflow is configured to monitor the `CancellationToken`,  it is possible to cancel a task I via the `Abort` call, by sending a `PATCH` HTTP request providing the  same unique identifier.
+
 ### Polling
+
+To retrieve tokens containing data to from background operations across different processes, it is possible to use `Poll<T>(ILongRunApi<T>, LongRunToken, CancellationToken, int)`. The extension targets the `LongRunController`, which is mapped to the `ILongRunApi<T>` by URL. It evaluates the `TaskStatus` enumeration to determine whether a background operation is still in progress, and if a cancellation has been requested, sends an `Abort` request using the unique identifier from the token.
+
+
+
+```c#
+private readonly ILongRunApi<LongRunItem> _api;
+private readonly ILongRunService<LongRunItem> _service;
+private readonly IExternalApi _external;
+...
+[HttpGet]
+[ProducesResponseType(StatusCodes.Status200OK)]
+public IActionResult Demo() 
+{
+    var token = _service.PutTask(async (cncl) => {
+        var externalToken = await _external.RunOperation();
+        await _api.Poll(externalToken, cncl);
+    });
+    return Ok(token);
+}
+```
+<p align="center">Fig. 5 - Generating a token with a <code>GET</code> HTTP request. The background operation obtains another token from the external api, and the <code>ILongRunApi</code> starts polling the result.</p>
+
 
 ## Managing Messages
 
