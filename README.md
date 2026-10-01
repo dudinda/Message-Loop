@@ -34,7 +34,7 @@ The purpose of demo is to show a convenient and minimal web interface for retrie
 
 ### Custom Topology On Ports
 
-To build a custom topology, it is necessary to ensure that `IConfigurationBuilder` overrides the `NodeOptions ` section of `appsettings.json` with environmental variables. The `ChildNodes` property represents an array of target hosts on which the subsequent background operations will be created. Additionally, the relevant model, contains a `Break` property that can be used if a request loops indefinitely.  
+To build a custom topology, it is necessary to ensure that `IConfigurationBuilder` overrides the `NodeOptions` section of `appsettings.json` with environmental variables. The `ChildNodes` property represents an array of target hosts on which the subsequent background operations will be created. Additionally, the relevant model, contains a `Break` property that can be used if a request loops indefinitely.  
 
 <p align="center">
    <img width="350" height="350" alt="topology" src="https://github.com/user-attachments/assets/af261481-2df5-490d-a0a7-8e7c69ac7d53" />
@@ -55,25 +55,25 @@ The following JSON graph provides an example of the background operations result
   "status": 5,
   "exception": null,
   "data": {
-    "data": "Operation completed on localhost:5000",
+    "result": "Operation completed on localhost:5000",
     "childResults": [
       {
         "status": 5,
         "exception": null,
         "data": {
-          "data": "Operation completed on localhost:5001",
+          "result": "Operation completed on localhost:5001",
           "childResults": [
             {
               "status": 5,
               "exception": null,
               "data": {
-                "data": "Operation completed on localhost:5002",
+                "result": "Operation completed on localhost:5002",
                 "childResults": [
                   {
                     "status": 5,
                     "exception": null,
                     "data": {
-                      "data": "Operation completed on localhost:5003",
+                      "result": "Operation completed on localhost:5003",
                       "childResults": []
                     }
                   }
@@ -84,7 +84,7 @@ The following JSON graph provides an example of the background operations result
               "status": 5,
               "exception": null,
               "data": {
-                "data": "Operation completed on localhost:5003",
+                "result": "Operation completed on localhost:5003",
                 "childResults": []
               }
             }
@@ -95,13 +95,13 @@ The following JSON graph provides an example of the background operations result
         "status": 5,
         "exception": null,
         "data": {
-          "data": "Operation completed on localhost:5002",
+          "result": "Operation completed on localhost:5002",
           "childResults": [
             {
               "status": 5,
               "exception": null,
               "data": {
-                "data": "Operation completed on localhost:5003",
+                "result": "Operation completed on localhost:5003",
                 "childResults": []
               }
             }
@@ -112,7 +112,7 @@ The following JSON graph provides an example of the background operations result
         "status": 5,
         "exception": null,
         "data": {
-          "data": "Operation completed on localhost:5003",
+          "result": "Operation completed on localhost:5003",
           "childResults": []
         }
       }
@@ -159,7 +159,7 @@ The exact implementation can be found in [MessageLoopService.cs](https://github.
 
 There are several related components that allow the subsystem to be built. The `ILongRunService<T>` binds a task with a unique identifier, maintaining two maps of running and completed operations. Additionally, the service captures a context containing ambient data, some properties of which can be initialized at the filter level or to accessed within a subsequent asynchronous workflow. Through the `TryGetResult` method, the service extracts a resulting token containing the current `TaskStatus`, `Exception`, and if the task has completed, the final result. 
 
-To manage long-running operations using a WEB API, the system provides the `LongRunController`. Its main purpose is to retrieve a `LongRunResult` by sending a `GET` HTTP request with a unique identifier. If a background workflow is configured to monitor the `CancellationToken`,  it is possible to cancel a task I via the `Abort` call, by sending a `PATCH` HTTP request providing the  same unique identifier.
+To manage long-running operations using a WEB API, the system provides the `LongRunController`. Its main purpose is to retrieve a `LongRunResult` by sending a `GET` HTTP request with a unique identifier. If a background workflow is configured to monitor the `CancellationToken`,  it is possible to cancel a task via the `Abort` call, by sending a `PATCH` HTTP request providing the same unique identifier.
 
 ### Polling
 
@@ -176,19 +176,24 @@ private readonly IExternalApi _external;
 [ProducesResponseType(StatusCodes.Status200OK)]
 public IActionResult Demo() 
 {
-    var token = _service.PutTask(async (cncl) => {
+    var token = _service.PutTask(async (cncl) => 
+    {
         var externalToken = await _external.RunOperation();
-        await _api.Poll(externalToken, cncl);
+        var result = await _api.Poll(externalToken, cncl);
+        return result;
     });
     return Ok(token);
 }
 ```
-<p align="center">Fig. 5 - Generating a token with a <code>GET</code> HTTP request. The background operation obtains another token from the external api, and the <code>ILongRunApi</code> starts polling the result.</p>
-
+<p align="center">Fig. 5 - Generating a token with a <code>GET</code> HTTP request. The background operation obtains another token from the external api, and the <code>ILongRunApi&lt;T&gt;</code> starts polling the result.</p>
 
 ## Managing Messages
 
-### Unicast
+To enable messaging, the system provides the `IMessageService<TMessage>` interface, which assembles a collection of channels and binds them to a string constant. By default, when a channel is added to the service,`SendMessage` unicasts an object, which is then written to the channel.  When the `Add` method is executed multiple times with the same constant, the service continues to add channels, enabling multicast messaging. 
+
+The actions within the `MessageController<TEnum>` consider only a unicast and broadcast methods of message transfer. The generic argument allows the routing to be dynamically extended, making custom messages possible. To use the controller, it is necessary to register two components from the `Web.Common.dll` assembly: `MessageControllerConvention`, and `MessageControllerProvider`.
+
+### Unicast/Multicast
 
 ### Broadcast
 
