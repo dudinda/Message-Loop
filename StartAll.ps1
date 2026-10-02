@@ -4,7 +4,6 @@ Start-Process `
 	-FilePath $exe.FullName `
 	-ArgumentList "--urls=http://localhost:5000" `
 	-Environment @{ 
-		"NodeOptions__IsRoot"="true"
 		"NodeOptions__ChildNodes__0"="http://localhost:5001"
 		"NodeOptions__ChildNodes__1"="http://localhost:5002"
 		"NodeOptions__ChildNodes__2"="http://localhost:5003"
