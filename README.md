@@ -1,3 +1,5 @@
+***Disclaimer**: The software provided in this repository was developed without the use of generative AI. Generative AI may only be used to verify grammatical correctness and syntax.*
+
 Part of the proposed interfaces were implemented between 2020 and 2024 while building an integration with Kubernetes. This project extends their usage to demonstrate a more general approach to managing and integrating them into a software system.
 
 # Message-Loop
