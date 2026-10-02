@@ -1,10 +1,11 @@
 ﻿using MessageLoop.Common.Models.LongRun;
+using MessageLoop.Web.Common.Services.Api;
 
 using Refit;
 
 namespace MessageLoop.Node.Services.Api
 {
-    public interface INodeApi
+    public interface INodeApi : ILongRunApi<LongRunItem>
     {
         /// <summary>
         /// Start a long-running operation on the current node.

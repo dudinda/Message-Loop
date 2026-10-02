@@ -21,24 +21,19 @@ namespace MessageLoop.Node.Services.Schedule.Implementation
             _options = options;
         }
 
-
         public async Task<List<LongRunToken>> RunOnChildNodes()
         {
-            var apis = _options.Value.ChildNodes.ToDictionary(
-                key => key, RestService.For<INodeApi>);
+            var apis = _options.Value.ChildNodes.Select(RestService.For<INodeApi>);
             var result = new List<LongRunToken>();
-            foreach (var kv in apis)
+            foreach (var api in apis)
             {
-                var api = kv.Value;
-                var url = kv.Key;
                 var response = await api.RunOnNode();
                 if (!response.IsSuccessStatusCode)
                 {
                     throw new InvalidOperationException(response.Error.Message);
                 }
                 result.Add(response.Content);
-                _map.Add(response.Content.Id, RestService.For<ILongRunApi<LongRunItem>>(url));
-
+                _map.Add(response.Content.Id, api);
             }
             return result;
         }
