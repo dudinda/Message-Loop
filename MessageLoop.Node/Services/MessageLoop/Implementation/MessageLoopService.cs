@@ -28,8 +28,8 @@ namespace MessageLoop.Node.Services.MessageLoop.Implementation
         {
             using var parent = CancellationTokenSource.CreateLinkedTokenSource(token);
             var channel = Channel.CreateUnbounded<Messages>();
-            _service.Add(key, channel);
 
+            _service.Add(key, channel);
             var opt = _options.Value;
             try
             {
