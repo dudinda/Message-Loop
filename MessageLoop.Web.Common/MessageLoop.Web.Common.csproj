@@ -4,6 +4,27 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+
+    <Authors>Daniil Dudin</Authors>
+    <Company>Message Loop</Company>
+    <Product>MessageLoop.Web.Common</Product>
+    <Description>Provides a set of controllers for managing long-running operations and custom messages.</Description>
+    <PackageTags>message-loop long-running-operations web-api </PackageTags>
+    <RepositoryType></RepositoryType>
+    <PackageProjectUrl>https://github.com/dudinda/Message-Loop</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/dudinda/Message-Loop</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Copyright>Copyright (c) 2026 Daniil Dudin</Copyright>
+    <Version>1.0.0</Version>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReleaseNotes>
+      -Initial realease of the MessageLoop.Web.Common package, 
+      providing essential controllers for managing long-running operations 
+      and custom messages in web applications.
+    </PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,4 +37,17 @@
     <ProjectReference Include="..\MessageLoop.Common\MessageLoop.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\LICENSE.txt" Link="LICENSE.txt">
+      <PackagePath></PackagePath>
+      <Pack>True</Pack>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\icon.png" Link="icon.png">
+      <PackagePath></PackagePath>
+      <Pack>True</Pack>
+    </None>
+  </ItemGroup>
 </Project>
