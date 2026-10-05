@@ -76,7 +76,7 @@ namespace MessageLoop.Service.Services.Message.Implementation
 
                 if (msgLoop.Count == 0)
                 {
-                    return _msgLoops.Remove(key, out msgLoop);
+                    return _msgLoops.Remove(key);
                 }
             }
 
