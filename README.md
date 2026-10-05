@@ -197,7 +197,27 @@ The actions within the `MessageController<TEnum>` consider only a unicast and br
 
 ### Unicast/Multicast
 
+To unicast a message to the `MessageController<TEnum>`, one possible approach is to generate an http-client from the `IMessageApi` and call the `Unicast` method.
+
+```C#
+private readonly IMessageApi _api;
+...
+var response = await _api.Unicast(nameof(TEnum), key, TEnum.Message.ToString());
+```
+<p align="center">Fig. 6 - Example of sending a <code>TEnum.Message</code> to a channel.</p>
+
+In case `IMessageService<TMessage>` is used outside web interfaces, the same behavior can be achieved by calling `SendMessage`.
+
 ### Broadcast
+
+The following statement iterates over the entire collection of keys, broadcasting the `TEnum.Message` to all channels. 
+
+```C#
+private readonly IMessageApi _api;
+...
+var response = await _api.Broadcast(nameof(TEnum), TEnum.Message.ToString());
+```
+<p align="center">Fig. 7 - Broadcasting a <code>Message</code> to all channels.</p>
 
 ## Created With
 
