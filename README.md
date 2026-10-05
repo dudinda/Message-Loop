@@ -221,7 +221,7 @@ var response = await _api.Broadcast(nameof(TEnum), TEnum.Message.ToString());
 
 ## Created With
 
-[.NET 10.0](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
+[.NET 10.0](https://dotnet.microsoft.com/en-us/download/dotnet/10.0), [netstandard2.0](https://learn.microsoft.com/en-us/dotnet/standard/net-standard?tabs=net-standard-2-0)
 
 [ASP.NET Core](https://www.nuget.org/packages/Microsoft.AspNetCore.Mvc.Core/2.3.9)
 
