@@ -230,3 +230,7 @@ var response = await _api.Broadcast(nameof(TEnum), TEnum.Message.ToString());
 [PowerShell 7](https://learn.microsoft.com/en-us/powershell/scripting/install/install-powershell?view=powershell-7.6)
 
 ## Nuget
+
+[MessageLoop.Common](https://www.nuget.org/packages/MessageLoop.Common/)
+
+[MessageLoop.Web.Common](https://www.nuget.org/packages/MessageLoop.Web.Common/)
