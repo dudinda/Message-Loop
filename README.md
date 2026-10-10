@@ -10,7 +10,7 @@ Part of the proposed interfaces were implemented between 2020 and 2024 while bui
 2. [Managing Long-Running Operations](#managing-long-running-operations)
    - [Polling](#polling)
 3. [Managing Messages](#managing-messages)
-   - [Unicast](#unicast)
+   - [Unicast/Multicast](#unicastmulticast)
    - [Broadcast](#broadcast)
 4. [Created With](#created-with)
 5. [NuGet](#nuget)
