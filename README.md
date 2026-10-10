@@ -153,7 +153,7 @@ It is also possible to format the response using an extension method. Calling `B
 
 Sometimes, an advanced workflow may require messaging between operations or propagating signals to another process. To avoid introducing external libraries or additional processes to consume messages, the system provides an interface containing a wrapper around a set of `Channel<T>` instances, which can be used to build a message loop within the application.
 
-Since ` IMessageService<TMessage>` has a singleton scope, its usage is not limited to the Web API-to-loop relationship; it also supports loop-to-loop communication. In this demo, there is an example of several custom messages used to manage the workflow: `Message.OK` to break out of the loop, `Message.Cancel` to trigger external cancellation, and `Message.Fail` to signal to the loop that an error occurred.
+Since `IMessageService<TMessage>` has a singleton scope, its usage is not limited to the Web API-to-loop relationship; it also supports loop-to-loop communication. In this demo, there is an example of several custom messages used to manage the workflow: `Message.OK` to break out of the loop, `Message.Cancel` to trigger external cancellation, and `Message.Fail` to signal to the loop that an error occurred.
 
 The exact implementation can be found in [MessageLoopService.cs](https://github.com/dudinda/Message-Loop/blob/master/MessageLoop.Node/Services/MessageLoop/Implementation/MessageLoopService.cs).
 
@@ -165,7 +165,7 @@ To manage long-running operations using a WEB API, the system provides the `Long
 
 ### Polling
 
-To retrieve tokens containing data to from background operations across different processes, it is possible to use `Poll<T>(ILongRunApi<T>, LongRunToken, CancellationToken, int)`. The extension targets the `LongRunController`, which is mapped to the `ILongRunApi<T>` by URL. It evaluates the `TaskStatus` enumeration to determine whether a background operation is still in progress, and if a cancellation has been requested, sends an `Abort` request using the unique identifier from the token.
+To retrieve tokens containing data from background operations across different processes, it is possible to use `Poll<T>(ILongRunApi<T>, LongRunToken, CancellationToken, int)`. The extension targets the `LongRunController`, which is mapped to the `ILongRunApi<T>` by URL. It evaluates the `TaskStatus` enumeration to determine whether a background operation is still in progress, and if a cancellation has been requested, sends an `Abort` request using the unique identifier from the token.
 
 
 
@@ -217,7 +217,7 @@ private readonly IMessageApi _api;
 ...
 var response = await _api.Broadcast(nameof(TEnum), TEnum.Message.ToString());
 ```
-<p align="center">Fig. 7 - Broadcasting a <code>Message</code> to all channels.</p>
+<p align="center">Fig. 7 - Broadcasting a <code>TEnum.Message</code> to all channels.</p>
 
 ## Created With
 
