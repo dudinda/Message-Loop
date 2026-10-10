@@ -24,6 +24,8 @@
       -Migrated package to netstandard2.0.
     </PackageReleaseNotes>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -43,6 +45,10 @@
     <None Include="..\icon.png" Link="icon.png">
       <PackagePath></PackagePath>
       <Pack>True</Pack>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 </Project>
